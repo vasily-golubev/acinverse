@@ -22,7 +22,9 @@ int main(int argc, char *argv[]) {
 	SeismicData data;
 	data.skipHeader(&ifs);
 	data.setDimensions(&ifs);
-	data.printDimensions();
+	data.setDXYT(&ifs);
+	data.readData(&ifs);
+	data.print();
 	ifs.close();
 	return EXIT_SUCCESS;
 }
