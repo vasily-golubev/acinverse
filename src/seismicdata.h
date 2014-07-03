@@ -12,6 +12,7 @@ class SeismicData {
 		void printDimensions();
 		void print();
 		void skipHeader(std::ifstream *ifs);
+		float getValue(float x, float y, float t);
 	private:
 		int n_x;
 		int n_y;

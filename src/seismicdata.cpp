@@ -33,6 +33,19 @@ void SeismicData::readData(std::ifstream *ifs) {
 		(*ifs) >> data[i][j][k];
 }
 
+float SeismicData::getValue(float x, float y, float t) {
+	const float magic_value = -777.777;
+	int i = x / d_x;
+	int j = y / d_y;
+	int k = t / d_t;
+	if ( ((i < 0) || (i > n_x - 1)) ||
+		((j < 0) || (j > n_y - 1)) ||
+		((k < 0) || (k > n_t - 1)) )
+		return magic_value;
+
+	return data[i][j][k];
+}
+
 void SeismicData::printDimensions() {
 	std::cout << "N_X = " << n_x << ", N_Y = " << n_y << ", N_T = " << n_t << std::endl;
 }

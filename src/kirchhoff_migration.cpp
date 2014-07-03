@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
 	data.setDXYT(&ifs);
 	data.readData(&ifs);
 	data.print();
+	cout << "Value: " << data.getValue(0.0, 0.0, 0.4) << endl;
 	ifs.close();
 	return EXIT_SUCCESS;
 }
