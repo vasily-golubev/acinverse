@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[english,russian]{babel}
+\begin{document}
+\title{Применение формулы Кирхгофа для задачи миграции}
+\author{\textbf{Голубев В.И.} \\ Лаборатория прикладной вычислительной геофизики МФТИ}
+\maketitle
+Согласно выводу (уравнени 13.208), приведённому в книге Жданова, распределение давления для
+задачи акустики, показывающее также и положение отражающих границ,
+может быть найдено на основе формулы Рэлея для случая горизонтальной плоскости
+наблюдения:
+\begin{equation}
+\label{rayleigh_migration}
+U^m(\vec{r'},0) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
+	\int_S \frac{U(\vec{r},\frac{2|\vec{r'}-\vec{r}|}{c})}{|\vec{r'}-\vec{r}|}ds,
+\end{equation}
+где $U$ - скалярное поле давления, $\vec{r}$ - координата на поверхности, в которой записывается
+сейсмограмма, $\vec{r'}$ - координата в объёме, где ищется мигрированное изображение, $c$ - скорость распространения возмущения, стоящая в волновом уравнении (уравнение 13.54):
+\begin{equation}
+\label{wave_equation}
+\nabla^2P(\vec{r},t) - \frac{1}{c^2(\vec{r})}\frac{\partial^2}{\partial t^2}
+	P(\vec{r},t) = - F^e(\vec{r},t).
+\end{equation}
+\end{document}
