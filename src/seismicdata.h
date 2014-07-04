@@ -4,7 +4,6 @@
 #include <fstream>
 
 #define MAX_SIZE 200
-#define MAGIC_VALUE -777.777
 
 class SeismicData {
 	public:
@@ -17,6 +16,8 @@ class SeismicData {
 		void print();
 		void skipHeader(std::ifstream *ifs);
 		float getValue(float x, float y, float t);
+		void saveImage();
+		void setFilename(const char *filename) { this->filename = filename; };
 		float dX() { return d_x; };
 		float dY() { return d_y; };
 		float dZ() { return d_z; };
@@ -35,6 +36,7 @@ class SeismicData {
 		float d_t;
 		/* data[along X][along Y][along T] */
 		float data[MAX_SIZE][MAX_SIZE][MAX_SIZE];
+		const char *filename;
 };
 
 #endif

@@ -1,7 +1,9 @@
 #include "seismicdata.h"
 
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <stdexcept>
 
 SeismicData::SeismicData() {
 	n_x = n_y = n_z = n_t = 0;
@@ -46,8 +48,9 @@ float SeismicData::getValue(float x, float y, float t) {
 	int k = t / d_t;
 	if ( ((i < 0) || (i > n_x - 1)) ||
 		((j < 0) || (j > n_y - 1)) ||
-		((k < 0) || (k > n_t - 1)) )
-		return MAGIC_VALUE;
+		((k < 0) || (k > n_t - 1)) ) {
+			throw std::runtime_error("For migration longer seismogram is necessary.");
+		}
 
 	return data[i][j][k];
 }
@@ -77,4 +80,32 @@ void SeismicData::skipHeader(std::ifstream *ifs) {
 	char str[256];
 	for (int i = 0; i < magic_number; i++)
 		ifs->getline(str, 256);
+}
+
+void SeismicData::saveImage() {
+	std::ofstream ofs;
+	ofs.open(filename, std::ofstream::out);
+	if (ofs.fail()) {
+		std::cout << "Can't open " << filename << " file." << std::endl;
+		return;
+	}
+	/* Make header. */
+	ofs << "# vtk DataFile Version 3.0\n";
+	ofs << "Created by AC_INVERSE\n";
+	ofs << "ASCII\n";
+	ofs << "DATASET STRUCTURED_POINTS\n";
+	ofs << "DIMENSIONS " << n_x << " " << n_y << " " << n_z << "\n";
+	ofs << "SPACING " << d_x << " " << d_y << " " << d_z << "\n";
+	ofs << "ORIGIN 0 0 0\n";
+	ofs << "POINT_DATA " << n_x * n_y * n_z << "\n";
+	ofs << "SCALARS Um float 1\n";
+	ofs << "LOOKUP_TABLE Um_table \n";
+	/* Save image. */
+	for (int k = 0; k < n_z; k++) {
+		for (int j = 0; j < n_y; j++)
+		for (int i = 0; i < n_x; i++)
+			ofs << image[i][j][k] << " ";
+		ofs << std::endl;
+	}
+	ofs.close();
 }
