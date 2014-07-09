@@ -17,7 +17,9 @@ class SeismicData {
 		void skipHeader(std::ifstream *ifs);
 		float getValue(float x, float y, float t);
 		void saveImage();
+		void saveSeismograms(const char *name);
 		void setFilename(const char *filename) { this->filename = filename; };
+		void generatePointSource(float x, float y, float z, float c);
 		float dX() { return d_x; };
 		float dY() { return d_y; };
 		float dZ() { return d_z; };

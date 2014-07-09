@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "types.h"
+
 SeismicData::SeismicData() {
 	n_x = n_y = n_z = n_t = 0;
 	d_x = d_y = d_z = d_t = 0;
@@ -12,6 +14,22 @@ SeismicData::SeismicData() {
 	for (int j = 0; j < n_y; j++)
 	for (int i = 0; i < n_x; i++)
 		image[i][j][k] = 0.0;
+}
+
+void SeismicData::generatePointSource(float x, float y, float z, float c) {
+	vector3 r_o(x, y, z);
+	for (int k = 0; k < n_t; k++)
+	for (int j = 0; j < n_y; j++)
+	for (int i = 0; i < n_x; i++) {
+		vector3 r(i * d_x, j * d_y, 0);
+		if ( (fabs(distance(r_o, r) / c - k * d_t) < d_t)
+			&& (distance(r_o, r) / c < k * d_t) ) {
+			data[i][j][k] = 1.0 / 4.0 / M_PI / distance(r_o, r);
+			std::cout << "Time " << k * d_t << ", Value " << data[i][j][k]
+			<< " " << i << " " << j << std::endl;
+		} else
+			data[i][j][k] = 0.0;
+	}
 }
 
 void SeismicData::setDimensions(int n_x, int n_y, int n_t) {
@@ -105,6 +123,34 @@ void SeismicData::saveImage() {
 		for (int j = 0; j < n_y; j++)
 		for (int i = 0; i < n_x; i++)
 			ofs << image[i][j][k] << " ";
+		ofs << std::endl;
+	}
+	ofs.close();
+}
+
+void SeismicData::saveSeismograms(const char *name) {
+	std::ofstream ofs;
+	ofs.open(name, std::ofstream::out);
+	if (ofs.fail()) {
+		std::cout << "Can't open " << name << " file." << std::endl;
+		return;
+	}
+	/* Make header. */
+	ofs << "# vtk DataFile Version 3.0\n";
+	ofs << "Created by AC_INVERSE\n";
+	ofs << "ASCII\n";
+	ofs << "DATASET STRUCTURED_POINTS\n";
+	ofs << "DIMENSIONS " << n_x << " " << n_y << " " << n_t << "\n";
+	ofs << "SPACING " << d_x << " " << d_y << " " << d_t << "\n";
+	ofs << "ORIGIN 0 0 0\n";
+	ofs << "POINT_DATA " << n_x * n_y * n_t << "\n";
+	ofs << "SCALARS U float 1\n";
+	ofs << "LOOKUP_TABLE U_table \n";
+	/* Save image. */
+	for (int k = 0; k < n_t; k++) {
+		for (int j = 0; j < n_y; j++)
+		for (int i = 0; i < n_x; i++)
+			ofs << data[i][j][k] << " ";
 		ofs << std::endl;
 	}
 	ofs.close();

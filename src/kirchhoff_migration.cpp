@@ -28,6 +28,9 @@ int main(int argc, char *argv[]) {
 	//data->print();
 	//cout << "Value: " << data->getValue(1000.0, 1000.0, 1.0) << endl;
 	ifs.close();
+	/* Hack to init seismogram as point-source generated. */
+	data->generatePointSource(0, 750, 1000, 2000.0);
+	data->saveSeismograms("temp.vtk");
 	RayleighIntegral integral;
 	integral.initParams(2000.0);
 	integral.initSeismicData(data);
