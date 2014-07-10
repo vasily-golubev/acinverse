@@ -23,6 +23,23 @@ U^m(\vec{r'},0) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
 	P(\vec{r},t) = - F^e(\vec{r},t).
 \end{equation}
 
+\section{Изображение точечного источника}
+
+Рассмотрим пример генерации синтетической сейсмограммы $U(\vec{r}, t)$ точечным источником, расположенным в однородной среде в точке $\vec{r_o}$.
+Согласно формуле (13.72) решение в данном случае имеет вид (момент действия источника $t = 0$):
+\begin{equation}
+\label{point_source}
+U(\vec{r}, t) = \frac{1}{4\pi|\vec{r} - \vec{r_o}|}\delta(t - \frac{|\vec{r} - \vec{r_o}}{c}).
+\end{equation}
+
+Подставляя формулу (\ref{point_source}) в формулул (\ref{rayleigh_migration}) получим:
+\begin{equation}
+\label{point_source_migrated}
+U^m(\vec{r'}) = -\frac{1}{8\pi^2}\frac{\partial}{\partial z'}\int_S \delta(\frac{2|\vec{r'} - \vec{r}| - |\vec{r} - \vec{r_o}|}{c})\frac{ds}{|\vec{r} - \vec{r_o}||\vec{r'} - \vec{r}|}.
+\end{equation}
+
+\section{Численная реализация}
+
 Рассмотрим простейший случай, когда расчётная сетка кубическая, и на поверхности сейсмоприёмники расположены в каждом её узле.
 В таком случае формула (\ref{rayleigh_migration}) может быть записана в виде:
 \begin{equation}
