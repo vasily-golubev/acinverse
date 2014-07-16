@@ -38,6 +38,13 @@ U(\vec{r}, t) = \frac{1}{4\pi|\vec{r} - \vec{r_o}|}\delta(t - \frac{|\vec{r} - \
 U^m(\vec{r'}) = -\frac{1}{8\pi^2}\frac{\partial}{\partial z'}\int_S \delta(\frac{2|\vec{r'} - \vec{r}| - |\vec{r} - \vec{r_o}|}{c})\frac{ds}{|\vec{r} - \vec{r_o}||\vec{r'} - \vec{r}|}.
 \end{equation}
 
+Выражение может быть приобразовано к виду:
+\begin{equation}
+\label{point_source_migrated_xy}
+U^m(x',y',z') = -\frac{1}{8\pi^2}\frac{\partial}{\partial z'} \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \frac{\delta(\frac{2\sqrt{(x-x')^2 + (y-y')^2 + z'^2} - \sqrt{(x-x_0)^2 + (y-y_0)^2 + z_0^2}}{c})dxdy}{\sqrt{(x-x')^2 + (y-y')^2 + z'^2}\sqrt{(x-x_0)^2 + (y-y_0)^2 + z_0^2}}.
+\end{equation}
+
+
 \section{Численная реализация}
 
 Рассмотрим простейший случай, когда расчётная сетка кубическая, и на поверхности сейсмоприёмники расположены в каждом её узле.
