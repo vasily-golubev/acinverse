@@ -41,7 +41,8 @@ void RayleighIntegral::calculateImage() {
 		for (int j = 0; j < sd->nY(); j++)
 		for (int i = 0; i < sd->nX(); i++) {
 			vector3 r_c(i * sd->dX(), j * sd->dY(), k * sd->dZ());
-			sd->image[i][j][k] = calculateIntegral(r_c.x, r_c.y, r_c.z);
+			int ind = i + j * sd->nX() + k * sd->nX() * sd->nY();
+			sd->image[ind] = calculateIntegral(r_c.x, r_c.y, r_c.z);
 		}
 	std::cout << "Z slice number: " << k << std::endl;
 	}

@@ -3,12 +3,11 @@
 
 #include <fstream>
 
-#define MAX_SIZE 200
-
 class SeismicData {
 	public:
 		SeismicData();
-		void setDimensions(int n_x, int n_y, int n_t);
+		~SeismicData();
+		/*void setDimensions(int n_x, int n_y, int n_t);*/
 		void setDimensions(std::ifstream *ifs);
 		void setDXYZT(std::ifstream *ifs);
 		void readData(std::ifstream*);
@@ -26,7 +25,7 @@ class SeismicData {
 		float nX() { return n_x; };
 		float nY() { return n_y; };
 		float nZ() { return n_z; };
-		float image[MAX_SIZE][MAX_SIZE][MAX_SIZE];
+		float *image;
 	private:
 		int n_x;
 		int n_y;
@@ -36,8 +35,7 @@ class SeismicData {
 		float d_y;
 		float d_z;
 		float d_t;
-		/* data[along X][along Y][along T] */
-		float data[MAX_SIZE][MAX_SIZE][MAX_SIZE];
+		float *data;
 		const char *filename;
 };
 

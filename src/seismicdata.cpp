@@ -1,5 +1,6 @@
 #include "seismicdata.h"
 
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -10,10 +11,11 @@
 SeismicData::SeismicData() {
 	n_x = n_y = n_z = n_t = 0;
 	d_x = d_y = d_z = d_t = 0;
-	for (int k = 0; k < n_z; k++)
-	for (int j = 0; j < n_y; j++)
-	for (int i = 0; i < n_x; i++)
-		image[i][j][k] = 0.0;
+}
+
+SeismicData::~SeismicData() {
+	free(data);
+	free(image);
 }
 
 void SeismicData::generatePointSource(float x, float y, float z, float c) {
@@ -22,28 +24,35 @@ void SeismicData::generatePointSource(float x, float y, float z, float c) {
 	for (int j = 0; j < n_y; j++)
 	for (int i = 0; i < n_x; i++) {
 		vector3 r(i * d_x, j * d_y, 0);
+		int ind = i + j * n_x + k * n_x * n_y;
 		if ( (fabs(distance(r_o, r) / c - k * d_t) < d_t)
 			&& (distance(r_o, r) / c < k * d_t) ) {
-			data[i][j][k] = 1.0 / 4.0 / M_PI / distance(r_o, r);
-			std::cout << "Time " << k * d_t << ", Value " << data[i][j][k]
+			data[ind] = 1.0 / 4.0 / M_PI / distance(r_o, r);
+			std::cout << "Time " << k * d_t << ", Value " << data[ind]
 			<< " " << i << " " << j << std::endl;
 		} else
-			data[i][j][k] = 0.0;
+			data[ind] = 0.0;
 	}
 }
 
-void SeismicData::setDimensions(int n_x, int n_y, int n_t) {
+/*void SeismicData::setDimensions(int n_x, int n_y, int n_t) {
 	this->n_x = n_x;
 	this->n_y = n_y;
 	this->n_z = n_z;
 	this->n_t = n_t;
-}
+}*/
 
 void SeismicData::setDimensions(std::ifstream *ifs) {
 	(*ifs) >> this->n_t;
 	(*ifs) >> this->n_x;
 	(*ifs) >> this->n_y;
 	(*ifs) >> this->n_z;
+	data = (float *) malloc(n_x * n_y * n_t * sizeof(float));
+	if (!data)
+			throw std::runtime_error("Can't allocate memory for data.");
+	image = (float *) malloc(n_x * n_y * n_z * sizeof(float));
+	if (!image)
+			throw std::runtime_error("Can't allocate memory for image.");
 }
 
 void SeismicData::setDXYZT(std::ifstream *ifs) {
@@ -56,8 +65,10 @@ void SeismicData::setDXYZT(std::ifstream *ifs) {
 void SeismicData::readData(std::ifstream *ifs) {
 	for (int k = 0; k < n_t; k++)
 	for (int j = 0; j < n_y; j++)
-	for (int i = 0; i < n_x; i++)
-		(*ifs) >> data[i][j][k];
+	for (int i = 0; i < n_x; i++) {
+		int ind = i + j * n_x + k * n_x * n_y;
+		(*ifs) >> data[ind];
+	}
 }
 
 float SeismicData::getValue(float x, float y, float t) {
@@ -69,8 +80,8 @@ float SeismicData::getValue(float x, float y, float t) {
 		((k < 0) || (k > n_t - 1)) ) {
 			throw std::runtime_error("For migration longer seismogram is necessary.");
 		}
-
-	return data[i][j][k];
+	int ind = i + j * n_x + k * n_x * n_y;
+	return data[ind];
 }
 
 void SeismicData::printDimensions() {
@@ -85,10 +96,12 @@ void SeismicData::print() {
 		<< ", d_t = " << d_t << std::endl;
 	for (int k = 0; k < n_t; k++) {
 		for (int j = 0; j < n_y; j++) {
-			for (int i = 0; i < n_x; i++)
-				std::cout << data[i][j][k] << "\t";
-			std::cout << std::endl;
+			for (int i = 0; i < n_x; i++) {
+				int ind = i + j * n_x + k * n_x * n_y;
+				std::cout << data[ind] << "\t";
 			}
+			std::cout << std::endl;
+		}
 		std::cout << std::endl;
 	}
 }
@@ -121,8 +134,10 @@ void SeismicData::saveImage() {
 	/* Save image. */
 	for (int k = 0; k < n_z; k++) {
 		for (int j = 0; j < n_y; j++)
-		for (int i = 0; i < n_x; i++)
-			ofs << image[i][j][k] << " ";
+		for (int i = 0; i < n_x; i++) {
+			int ind = i + j * n_x + k * n_x * n_y;
+			ofs << image[ind] << " ";
+		}
 		ofs << std::endl;
 	}
 	ofs.close();
@@ -149,8 +164,10 @@ void SeismicData::saveSeismograms(const char *name) {
 	/* Save image. */
 	for (int k = 0; k < n_t; k++) {
 		for (int j = 0; j < n_y; j++)
-		for (int i = 0; i < n_x; i++)
-			ofs << data[i][j][k] << " ";
+		for (int i = 0; i < n_x; i++) {
+			int ind = i + j * n_x + k * n_x * n_y;
+			ofs << data[ind] << " ";
+		}
 		ofs << std::endl;
 	}
 	ofs.close();
