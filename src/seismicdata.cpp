@@ -28,11 +28,27 @@ void SeismicData::generatePointSource(float x, float y, float z, float c) {
 		if ( (fabs(distance(r_o, r) / c - k * d_t) < d_t)
 			&& (distance(r_o, r) / c < k * d_t) ) {
 			data[ind] = 1.0 / 4.0 / M_PI / distance(r_o, r);
+//#define MY_INFINITY 1.0
+//			data[ind] = MY_INFINITY;
 			std::cout << "Time " << k * d_t << ", Value " << data[ind]
 			<< " " << i << " " << j << std::endl;
 		} else
 			data[ind] = 0.0;
 	}
+}
+
+void SeismicData::generatePointRickerWavelet(float x, float y, float z, float c, float f) {
+	// TODO http://subsurfwiki.org/wiki/Ricker_wavelet.
+        vector3 r_o(x, y, z);
+        for (int k = 0; k < n_t; k++)
+        for (int j = 0; j < n_y; j++)
+        for (int i = 0; i < n_x; i++) {
+                vector3 r(i * d_x, j * d_y, 0);
+                int ind = i + j * n_x + k * n_x * n_y;
+		float t = 2.0 * distance(r_o, r) / c;
+		float value = (1 - 2.0 * M_PI * M_PI * f * f * t * t) * exp(- M_PI * M_PI * f * f * t * t);
+		data[ind] = 1.0 / 4.0 / M_PI / distance(r_o, r) * value;
+        }
 }
 
 /*void SeismicData::setDimensions(int n_x, int n_y, int n_t) {
