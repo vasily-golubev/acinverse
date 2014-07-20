@@ -39,14 +39,15 @@ void SeismicData::generatePointSource(float x, float y, float z, float c) {
 
 void SeismicData::generatePointRickerWavelet(float x, float y, float z, float c, float f) {
 	// TODO http://subsurfwiki.org/wiki/Ricker_wavelet.
+#define MY_LARGE_AMPLITUDE 1000000.0
         vector3 r_o(x, y, z);
         for (int k = 0; k < n_t; k++)
         for (int j = 0; j < n_y; j++)
         for (int i = 0; i < n_x; i++) {
                 vector3 r(i * d_x, j * d_y, 0);
                 int ind = i + j * n_x + k * n_x * n_y;
-		float t = 2.0 * distance(r_o, r) / c;
-		float value = (1 - 2.0 * M_PI * M_PI * f * f * t * t) * exp(- M_PI * M_PI * f * f * t * t);
+		float t = k * d_t - 2.0 * distance(r_o, r) / c;
+		float value = MY_LARGE_AMPLITUDE * (1 - 2.0 * M_PI * M_PI * f * f * t * t) * exp(- M_PI * M_PI * f * f * t * t);
 		data[ind] = 1.0 / 4.0 / M_PI / distance(r_o, r) * value;
         }
 }
