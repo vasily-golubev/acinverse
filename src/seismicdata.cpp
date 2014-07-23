@@ -18,6 +18,33 @@ SeismicData::~SeismicData() {
 	free(image);
 }
 
+void SeismicData::readDataMadagascar(const char *filename, int nt, int nx, float dt, float dx) {
+	n_t = nt;
+	d_t = dt;
+	n_x = nx;
+	d_x = dx;
+	n_y = 1;
+	d_y = 1;
+	n_z = 125;
+	d_z = 40;
+	data = (float *) calloc(n_x * n_y * n_t, sizeof(float));
+	if (!data)
+			throw std::runtime_error("Can't allocate memory for data.");
+	image = (float *) calloc(n_x * n_y * n_z, sizeof(float));
+	if (!image)
+			throw std::runtime_error("Can't allocate memory for image.");
+	std::ifstream ifs;
+	ifs.open(filename, std::ifstream::in | std::ifstream::binary);
+	if (ifs.fail())
+		throw std::runtime_error("Can't open Madagascar file.");
+	for (int i = 0; i < nx; i++)
+		for (int k = 0; k < nt; k++) {
+			int j = 0;
+			int ind = i + j * n_x + k * n_x * n_y;
+			ifs.read((char *)&(data[ind]), sizeof(float));
+		}
+	ifs.close();
+}
 void SeismicData::generatePointSource(float x, float y, float z, float c) {
 	vector3 r_o(x, y, z);
 	for (int k = 0; k < n_t; k++)
