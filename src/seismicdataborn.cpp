@@ -104,7 +104,7 @@ void SeismicDataBorn::saveData(const char *filename) {
 	ofs << "DIMENSIONS " << n_x << " " << 1 << " " << 200 << "\n";
 	ofs << "SPACING " << d_x << " " << 0 << " " << d_z << "\n";
 	ofs << "ORIGIN 0 0 0\n";
-	ofs << "POINT_DATA " << n_x * n_z << "\n";
+	ofs << "POINT_DATA " << n_x * 200 << "\n";
 	ofs << "SCALARS p-omega float 1\n";
 	ofs << "LOOKUP_TABLE p-omega_table \n";
 	/* Save model. */
