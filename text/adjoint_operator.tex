@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\begin{document}
+\title{Алгоритм миграции на основе присоединённого оператора}
+\author{\textbf{м.н.с. Голубев В.И.} \\ Лаборатория прикладной вычислительной геофизики МФТИ}
+\maketitle
+
+Согласно книге (Жданов, Теория обратных задач) в акустическом приближении свзяь между наблюдаемым давлением на
+сейсмоприёмниках на поверхности и параметрами среды может быть выражена формулой (приближение Борна, формула 15.5):
+
+\begin{equation}
+\label{eq_born_approximation_1}
+p^s(\vec{r}_j, w) = w^2\int_D G^w_b(\vec{r}_j|\vec{r};w)\Delta s^2(\vec{r})p^i(\vec{r},w)  dv,
+\end{equation}
+
+в которой $\vec{r}_j$ - радиус-вектор точки приёмника, $D$ - область, в которой параметр медленности ($s = \frac{1}{c}$)
+отличается от фоновой медленности ($s_b = \frac{1}{c_b},\Delta s^2 = \frac{1}{c^2} - \frac{1}{c^2_b})$, $p^i$ - давление, которое создавалось бы
+в отсутствии неоднородности в области $D$, $G^w_b$ - функция Грина для фоновой медленности.
+Согласно формуле (13.74) она может быть записана для однородной среды в виде:
+
+\begin{equation}
+\label{eq_grin_function}
+ G^w_b(\vec{r}_j|\vec{r};w) = \frac{1}{4\pi|\vec{r}-\vec{r}_j|}e^{iw\frac{|\vec{r}-\vec{r}_j|}{c_b}}.
+\end{equation}
+
+Подставляя (\ref{eq_grin_function}) в формулу (\ref{eq_born_approximation_1}) получим:
+
+\begin{equation}
+\label{eq_born_approximation_2}
+p^s(\vec{r}_j, w) = w^2\int_D \frac{1}{4\pi|\vec{r}-\vec{r}_j|}e^{iw\frac{|\vec{r}-\vec{r}_j|}{c_b}} \Delta s^2(\vec{r})p^i(\vec{r},w)  dv.
+\end{equation}
+
+Займёмся теперь вычислением $p^i$.
+Пусть источник возмущения - точечный взрыв, происходящий в нулевой момент времени в точке $\vec{r}_0$.
+Тогда в случае однородной среды с фоновой медленностью $s_b$ можно записать решение в виде:
+
+\begin{equation}
+\label{eq_point_explosion}
+p^i(\vec{r}, w) = \frac{1}{4\pi|\vec{r}-\vec{r}_0|}e^{iw\frac{|\vec{r}-\vec{r}_0|}{c_b}}.
+\end{equation}
+
+Подставляя (\ref{eq_point_explosion}) в формулу (\ref{eq_born_approximation_2}) получим:
+
+\begin{eqnarray}
+\label{eq_born_approximation_3}
+p^s(\vec{r}_j, w) = w^2\int_D \frac{1}{4\pi|\vec{r}-\vec{r}_j|}e^{iw\frac{|\vec{r}-\vec{r}_j|}{c_b}} \Delta s^2(\vec{r})\frac{1}{4\pi|\vec{r}-\vec{r}_0|}e^{iw\frac{|\vec{r}-\vec{r}_0|}{c_b}}  dv = \nonumber \\
+= \frac{w^2}{16\pi^2} \int_D \frac{e^{iw\frac{|\vec{r}-\vec{r}_0| + |\vec{r}-\vec{r}_j|}{c_b}}}{|\vec{r}-\vec{r}_j||\vec{r}-\vec{r}_0|} \Delta s^2(\vec{r}) dv.
+\end{eqnarray}
+
+Вводя дискретизацию по пространству в виде параллелепипедной сетки с шагами $\delta x, \delta y, \delta z$ и индексами $l, m, p$ формулу (\ref{eq_born_approximation_3}) можно
+привести к виду:
+
+\begin{equation}
+\label{eq_born_approximation_num}
+p^s(\vec{r}_j, w) = \frac{w^2}{16\pi^2} \sum_{(l,m,p)\in D} \frac{e^{iw\frac{|\vec{r}_{l,m,p}-\vec{r}_0| + |\vec{r}_{l,m,p}-\vec{r}_j|}{c_b}}}{|\vec{r}_{l,m,p}-\vec{r}_j||\vec{r}_{l,m,p}-\vec{r}_0|} \Delta s_{l,m,p}^2 \delta x \delta y \delta z.
+\end{equation}
+
+На первом этапе рассмотрим двумерный случай, когда вдоль $Y$ содержится всего одна ячейка.
+Тогда можно избавиться от индекса $m$, а также сейсмодатчики устанавливаются вдоль одной линии $OX$ и могут быть параметризованы одним индексом $j$.
+Формула (\ref{eq_born_approximation_num}) сводится к виду:
+
+\begin{equation}
+\label{eq_born_approximation_num_2D}
+p^s(x_j, w) = \frac{w^2 \delta x \delta z}{16\pi^2} \sum_{(l,p)\in D} \frac{e^{iw\frac{D_{l,p}+d_{j,l,p}}{c_b}}}{D_{l,p}d_{j,l,p}} \Delta s_{l,p}^2,
+\end{equation}
+
+где $D_{l,p}=|\vec{r}_{l,p}-\vec{r}_0|$ и $d_{j,l,p}=|\vec{r}_{l,p}-\vec{x}_j|$.
+
+Пусть матрица $\Delta s_{l,p}^2$ развернута в $1D$ массив так, что последовательно в нём лежат её строки.
+И пусть размер модели по $X$ равен $P$, а по $Z$ - $L$.
+Тогда индекс в массиве имеет вид $ind = p + l * P$, $p \in [0, P - 1], l \in [0, L - 1]$.
+Также справедливы равенства: $l = [\frac{ind}{P}]$ и $p = ind - [\frac{ind}{P}] * P$.
+
+С учётом введённой параметризации массива и того факта, что вне неоднородности $\Delta s^2 = 0$, можно записать формулу (\ref{eq_born_approximation_num_2D}) в виде:
+
+\begin{equation}
+\label{eq_born_approximation_num_2D_ind}
+p^s(x_j, w) = \sum_{(ind)\in [0, L * P - 1]} L_{j,ind} \Delta s_{ind}^2,
+\end{equation}
+
+где матрица $L_{j,ind} = \frac{w^2 \delta x \delta z}{16\pi^2} \frac{e^{iw\frac{D_{ind}+d_{j,ind}}{c_b}}}{D_{ind}d_{j,ind}}$,
+$D_{ind}=\sqrt{(x_{ind} - x_0)^2 + (y_{ind} - y_0)^2}$ и $d_{j,ind}=\sqrt{(x_{ind} - x_j)^2 + y_{ind}^2}$.
+Это и является реализованным представлением зависимости данных на приёмниках от параметров модели.
+
+\end{document}
