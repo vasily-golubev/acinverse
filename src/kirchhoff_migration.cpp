@@ -3,14 +3,15 @@
 #include <fstream>
 
 #include "rayleighintegral.h"
+#include "seismicdataborn.h"
 
-using namespace std;
+//using namespace std;
 
-ifstream ifs;
+//ifstream ifs;
 
 // FIXME Add correct error handling.
 int main(int argc, char *argv[]) {
-	if (argc < 3) {
+/*	if (argc < 3) {
 		cout << "Usage ./kirchhoff_migration input_file_name output_file_name.vtk" << endl;
 		return EXIT_FAILURE;
 	}
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
 	data->readDataMadagascar("/var/tmp/zhdanov/test/node6/zodata.rsf@", 2001, 251, 0.01, 40);
 	data->saveSeismograms("madagascar.vtk");
 	data->setFilename(argv[2]);
-/*	data->skipHeader(&ifs);
+	data->skipHeader(&ifs);
 	data->setDimensions(&ifs);
 	data->setDXYZT(&ifs);
 	data->readData(&ifs);
@@ -33,12 +34,18 @@ int main(int argc, char *argv[]) {
 	ifs.close();
 */
 	/* Hack to init seismogram as point-source generated. */
-//	data->generatePointSource(0, 750, 1000, 2000.0);
-//	data->saveSeismograms("temp.vtk");
+/*	data->generatePointSource(0, 750, 1000, 2000.0);
+	data->saveSeismograms("temp.vtk");
 	RayleighIntegral integral;
 	integral.initParams(2000.0);
 	integral.initSeismicData(data);
 	integral.calculateImage();
 	data->saveImage();
+*/
+	SeismicDataBorn data;
+	data.generateSimpleModel(100, 10, 100, 10, 2000.0);
+	data.saveModel("model.vtk");
+	data.generateSimpleData();
+	data.saveData("data.vtk");
 	return EXIT_SUCCESS;
 }
