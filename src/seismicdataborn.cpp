@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <fstream>
+#include <iostream>
 
 #include "seismicdataborn.h"
 
@@ -11,7 +12,7 @@ SeismicDataBorn::SeismicDataBorn() {
 
 SeismicDataBorn::~SeismicDataBorn() {
 	free(model);
-	//free(data);
+	free(data);
 }
 
 void SeismicDataBorn::generateSimpleModel(int nx, float dx, int nz, float dz, float c) {
@@ -29,21 +30,25 @@ void SeismicDataBorn::generateSimpleModel(int nx, float dx, int nz, float dz, fl
 }
 
 void SeismicDataBorn::generateSimpleData() {
-	data = (std::complex<float> *) calloc(n_x, sizeof(std::complex<float>));
-
 	// Source - at point (0, 0).
 	vector3 r_o(0, 0, 0);
-	// Fixed Omega = 30 Hz;
-	float w = 30.0;
-	for (int rec = 0; rec < n_x; rec++) {
-		vector3 r_rec(rec * d_x, 0.0, 0.0);
-		std::complex<float> res(0.0, 0.0);
-		for (int i = 0; i < n_x; i++)
-			for (int k = 0; k < n_z; k++) {
-				vector3 r(i * d_x, k * d_z, 0);
-				res += calculateMatrixElement(w, r_rec, r_o, r);
-			}
-		data[rec] = res;
+	// Moving Omega 1 - 100 Hz with step 0.5 Hz.
+	data = (std::complex<float> *) calloc(n_x * 200, sizeof(std::complex<float>));
+	float w = 0;
+	for (int w_n = 1; w_n < 201; w_n++) {
+		w += 0.5;
+		std::cout << "Frequence is " << w << " Hz\n";
+		for (int rec = 0; rec < n_x; rec++) {
+			vector3 r_rec(rec * d_x, 0.0, 0.0);
+			std::complex<float> res(0.0, 0.0);
+			for (int i = 0; i < n_x; i++)
+				for (int k = 0; k < n_z; k++) {
+					vector3 r(i * d_x, k * d_z, 0);
+					res += calculateMatrixElement(w, r_rec, r_o, r);
+				}
+			int ind = rec + (w_n - 1) * rec;
+			data[ind] = res;
+		}
 	}
 }
 
@@ -96,17 +101,18 @@ void SeismicDataBorn::saveData(const char *filename) {
 	ofs << "Created by AC_INVERSE\n";
 	ofs << "ASCII\n";
 	ofs << "DATASET STRUCTURED_POINTS\n";
-	ofs << "DIMENSIONS " << n_x << " " << 1 << " " << n_x << "\n";
-	ofs << "SPACING " << d_x << " " << 0 << " " << d_x << "\n";
+	ofs << "DIMENSIONS " << n_x << " " << 1 << " " << 200 << "\n";
+	ofs << "SPACING " << d_x << " " << 0 << " " << d_z << "\n";
 	ofs << "ORIGIN 0 0 0\n";
 	ofs << "POINT_DATA " << n_x * n_z << "\n";
 	ofs << "SCALARS p-omega float 1\n";
 	ofs << "LOOKUP_TABLE p-omega_table \n";
 	/* Save model. */
 	// FIXME Do smth understandable here!
-	for (int i_1 = 0; i_1 < n_x; i_1++) {
-		for (int i_2 = 0; i_2 < n_x; i_2++) {
-			ofs << data[i_2].imag() << " ";
+	for (int k = 0; k < 200; k++) {
+		for (int i = 0; i < n_x; i++) {
+			int ind = i + k * n_x;
+			ofs << data[ind].imag() << " ";
 		}
 		ofs << std::endl;
 	}
