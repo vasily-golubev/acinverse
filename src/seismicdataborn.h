@@ -22,7 +22,8 @@ class SeismicDataBorn {
 		float d_x;
 		float d_z;
 		float *model;
-		std::complex<float> *data;
+		std::complex<float> *data_w;
+		std::complex<float> *data_t;
 		float c_b;
 };
 
