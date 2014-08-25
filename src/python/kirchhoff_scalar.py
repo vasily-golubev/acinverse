@@ -7,6 +7,25 @@ based on Kirchhoff formula'''
 
 # My definitions: rr = r', tt = t'
 
+# Mesh parameters
+nx = 100
+ny = 1
+nz = 50
+dx = 20.0
+dy = 40.0
+dz = 40.0
+data = [0.0 for ind in range(nx * ny * nz)]
+
+# Medium properties
+c = 2000.0
+
+# The case of P-wave with length L m
+L = 200.0
+P_0 = 1.0
+
+# FIXME
+dt = 0.01
+
 class Vector():
 	x = 0
 	y = 0
@@ -22,13 +41,6 @@ class Vector():
 				self.y - other.y,
 				self.z - other.z)
 
-c = 2000.0
-dt = 1.0
-dx = 1.0
-dy = 1.0
-nx = 100
-ny = 100
-
 def getDistance(r, rr):
 	d = Vector()
 	d = r - rr
@@ -39,9 +51,6 @@ def initProblem():
 	pass
 
 def getSurfacePressure(r, rr, tt):
-	# The case of P-wave with length L m
-	L = 100.0
-	P_0 = 1.0
 	t = tt - getDistance(r, rr) / c
 	if (t > 0.0) and (t < L / c):
 		return P_0
@@ -49,15 +58,11 @@ def getSurfacePressure(r, rr, tt):
 		return 0.0
 
 def getDTTSurfacePressure(r, rr, tt):
-	# FIXME What about dt value?
-	dt = 0.1
 	return (getSurfacePressure(r, rr, tt + dt) - getSurfacePressure(r, rr, tt)) / dt
 
 def getDZSurfacePressure(r, rr, tt):
-	# FIXME What about dz value?
-	dz = 0.1
 	r_dz = Vector(r.x, r.y, r.z + dz)
-	return (getSurfacePressure(r_dz, rr, tt + dt) - getSurfacePressure(r, rr, tt)) / dt
+	return (getSurfacePressure(r_dz, rr, tt + dt) - getSurfacePressure(r, rr, tt)) / dz
 
 def getSingleValue(r, rr, tt):
 	d = getDistance(r, rr)
@@ -66,19 +71,56 @@ def getSingleValue(r, rr, tt):
 	res -= 1.0 / d * getDZSurfacePressure(r, rr, tt)
 	return res
 
+def saveImageVTK(tt):
+	f = open("screenshot_{0}.vtk".format(tt), "w")
+	# Write header
+	f.write("# vtk DataFile Version 3.0\n")
+	f.write("Created by AC_INVERSE\n")
+	f.write("ASCII\n")
+	f.write("DATASET STRUCTURED_POINTS\n")
+        f.write("DIMENSIONS {0} {1} {2}\n".format(nx, ny, nz))
+	f.write("SPACING {0} {1} {2}\n".format(dx, dy, dz))
+	f.write("ORIGIN 0 0 0\n")
+	f.write("POINT_DATA {0}\n".format(nx * ny * nz))
+	f.write("SCALARS P float 1\n")
+	f.write("LOOKUP_TABLE P_table \n")
+	# Write data
+	for k in range(nz):
+		for j in range(ny):
+			for i in range(nx):
+				ind = i + j * nx + k * nx * ny
+				f.write(str(data[ind]) + " ")
+		f.write("\n")
+	f.close()
+
+def initProblem():
+	pass
+
 # Here is the entrance point in the program
 
 initProblem()
-r = Vector(1.0, 2.0, 3.0)
-rr = Vector(400.0, 5.0, 6.0)
-tt = 0.0
-# FIXME Calculate for whole mesh
-P = 0.0
-for j in range(ny):
-	for i in range(nx):
-		r.x = i * dx
-		r.y = j * dy
-		r.z = 0
-		P += 1.0 / (4.0 * pi) * getSingleValue(r, rr, tt) * dx * dy
+r = Vector()
+rr = Vector()
 
-print "Pressure is equal to", P
+for tt in (0.2, 0.4, 0.6, 0.8):
+	for kk in range(1, nz):
+		for jj in range(ny):
+			# FIXME rr == r => BANG!
+			for ii in range(nx):
+				P = 0.0
+				rr.x = ii * dx
+				rr.y = jj * dy
+				rr.z = kk * dz
+				for j in range(ny):
+					for i in range(nx):
+						r.x = i * dx
+						r.y = j * dy
+						r.z = 0
+						P += 1.0 / (4.0 * pi) * getSingleValue(r, rr, tt) * dx * dy
+				ind = ii + jj * nx + kk * nx * ny
+				data[ind] = P
+		# TODO Some interactive tool
+		print "Z-layer:", kk
+
+	# Save screenshot at the final stage
+	saveImageVTK(tt)
