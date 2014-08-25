@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{graphicx}
+\usepackage{todonotes}
+\usepackage{hyperref}
+\begin{document}
+\title{Расчёт прямой задачи для скалярного волнового уравнения по формуле Кирхгофа}
+\author{\textbf{м.н.с. Голубев В.И.} \\ Лаборатория прикладной вычислительной геофизики МФТИ}
+\maketitle
+Рассмотрим задачу о распространении скалярного волнового поля в однородном нижнем полупространстве,
+ограниченном сверху плоской поверхностью $S$.
+Скалярное волнове уравнение во временной области может быть записано в виде:
+
+\begin{equation}
+\label{eq_wave_equation}
+\nabla^2 P(\vec{r}, t) - \frac{1}{c^2}\frac{\partial^2}{\partial t^2}P(\vec{r}, t) = 0.
+\end{equation}
+
+Для него функция Грина имеет вид:
+\begin{equation}
+\label{eq_grin_function}
+G^w(\vec{r}, t | \vec{r'}, t') = \frac{1}{4\pi|\vec{r} - \vec{r'}|}\delta(t - t' - \frac{|\vec{r} -
+\vec{r'}|}{c}),
+\end{equation}
+где $\vec{r'}, t'$ - место расположения источника и время, в которое он начал действовать.
+
+В общем виде (для ограниченной и для неограниченной области) формула Кирхгофа может быть записана
+в виде:
+
+\begin{equation}
+\label{eq_kirchhoff_formula}
+P(\vec{r'}, t') = \int_S \int_{-\infty}^{+\infty} [G^w(\vec{r'}, t' | \vec{r}, t) \frac{\partial}
+{\partial n} P(\vec{r}, t) - P(\vec{r}, t) \frac{\partial}{\partial n} G^w(\vec{r'}, t' |
+\vec{r}, t)] dt ds.
+\end{equation}
+
+Подставляя в (\ref{eq_kirchhoff_formula}) выражение для формулы Грина в явном виде (\ref{eq_grin_function}) получим
+\begin{equation}
+\label{eq_kirchhoff_homogeneous}
+P(\vec{r'}, t') = \frac{1}{4\pi} \int_S [\frac{1}{c|\vec{r'} - \vec{r}|}
+\frac{\partial |\vec{r'} - \vec{r}|}{\partial n}\frac{\partial P'}{\partial t'}
+- \frac{\partial}{\partial n}(\frac{1}{|\vec{r'} - \vec{r}|}) P' + 
+\frac{1}{|\vec{r'} - \vec{r}|}\frac{\partial}{\partial n}P'] ds,
+\end{equation}
+где $P' = P(\vec{r}, t' - \frac{|\vec{r'} - \vec{r}|}{c})$.
+
+В нашем случае $\frac{\partial}{\partial n} = -\frac{\partial}{\partial z}$, поэтому выражение
+(\ref{eq_kirchhoff_homogeneous}) может быть упрощено до вида:
+\begin{equation}
+\label{eq_kirchhoff_final}
+P(\vec{r'}, t') = \frac{1}{4\pi} \int_S [\frac{z' - z}{|\vec{r'} - \vec{r}|}(\frac{1}{c}
+\frac{\partial P'}{\partial t'} + \frac{1}{|\vec{r'} - \vec{r}|^2} P') - \frac{1}{|\vec{r'}
+- \vec{r}|}\frac{\partial P'}{\partial z}] ds
+\end{equation}
+
+\end{document}
