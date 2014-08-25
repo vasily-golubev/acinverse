@@ -12,7 +12,8 @@ SeismicDataBorn::SeismicDataBorn() {
 
 SeismicDataBorn::~SeismicDataBorn() {
 	free(model);
-	free(data);
+	free(data_w);
+	free(data_t);
 }
 
 void SeismicDataBorn::generateSimpleModel(int nx, float dx, int nz, float dz, float c) {
@@ -32,11 +33,13 @@ void SeismicDataBorn::generateSimpleModel(int nx, float dx, int nz, float dz, fl
 void SeismicDataBorn::generateSimpleData() {
 	// Source - at point (0, 0).
 	vector3 r_o(0, 0, 0);
-	// Moving Omega 1 - 100 Hz with step 0.5 Hz.
-	data = (std::complex<float> *) calloc(n_x * 200, sizeof(std::complex<float>));
-	float w = 0;
-	for (int w_n = 1; w_n < 201; w_n++) {
-		w += 0.5;
+	// Moving Omega -250 - +250 Hz with step 0.05 Hz.
+	data_w = (std::complex<float> *) calloc(n_x * 10000, sizeof(std::complex<float>));
+	// Moving T 0 - 1 s with step 0.001.
+	data_t = (std::complex<float> *) calloc(n_x * 10000, sizeof(std::complex<float>));
+	float w = -250.0;
+	for (int w_n = 1; w_n < 10001; w_n++) {
+		w += 0.05;
 		std::cout << "Frequence is " << w << " Hz\n";
 		for (int rec = 0; rec < n_x; rec++) {
 			vector3 r_rec(rec * d_x, 0.0, 0.0);
@@ -47,7 +50,25 @@ void SeismicDataBorn::generateSimpleData() {
 					res += calculateMatrixElement(w, r_rec, r_o, r);
 				}
 			int ind = rec + (w_n - 1) * rec;
-			data[ind] = res;
+			data_w[ind] = res;
+		}
+	}
+
+	for (int rec = 0; rec < n_x; rec++) {
+		std::cout << "Receiver is " << rec << " s\n";
+		float t = 0.0;
+		for (int t_n = 1; t_n < 1001; t_n++) {
+			t += 0.001;
+			//std::cout << "Time is " << t << " s\n";
+			float w = -250.0;
+			std::complex<float> res(0.0, 0.0);
+			for (int w_n = 1; w < 10001; w++) {
+				w += 0.05;
+				int ind = rec + (w_n - 1) * rec;
+				res += data_w[ind] * std::exp(-std::complex<float>(0.0, 1.0) * w * t ) * -std::complex<float>(0.05 / 2.0 / M_PI, 0.0);
+			}
+			int ind = rec + (t_n - 1) * rec;
+			data_t[ind] = res;
 		}
 	}
 }
@@ -101,18 +122,18 @@ void SeismicDataBorn::saveData(const char *filename) {
 	ofs << "Created by AC_INVERSE\n";
 	ofs << "ASCII\n";
 	ofs << "DATASET STRUCTURED_POINTS\n";
-	ofs << "DIMENSIONS " << n_x << " " << 1 << " " << 200 << "\n";
+	ofs << "DIMENSIONS " << n_x << " " << 1 << " " << 1000 << "\n";
 	ofs << "SPACING " << d_x << " " << 0 << " " << d_z << "\n";
 	ofs << "ORIGIN 0 0 0\n";
-	ofs << "POINT_DATA " << n_x * 200 << "\n";
-	ofs << "SCALARS p-omega float 1\n";
-	ofs << "LOOKUP_TABLE p-omega_table \n";
+	ofs << "POINT_DATA " << n_x * 1000 << "\n";
+	ofs << "SCALARS p-t float 1\n";
+	ofs << "LOOKUP_TABLE p-t_table \n";
 	/* Save model. */
 	// FIXME Do smth understandable here!
-	for (int k = 0; k < 200; k++) {
+	for (int k = 0; k < 1000; k++) {
 		for (int i = 0; i < n_x; i++) {
 			int ind = i + k * n_x;
-			ofs << data[ind].imag() << " ";
+			ofs << data_t[ind].real() << " ";
 		}
 		ofs << std::endl;
 	}
