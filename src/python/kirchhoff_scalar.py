@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from math import sqrt, pi
+from math import exp, sqrt, pi
 
 print '''Solver of direct problem for scalar wave equation \
 based on Kirchhoff formula'''
@@ -8,20 +8,20 @@ based on Kirchhoff formula'''
 # My definitions: rr = r', tt = t'
 
 # Mesh parameters
-nx = 100
+nx = 50
 ny = 1
 nz = 50
 dx = 20.0
-dy = 40.0
-dz = 40.0
+dy = 20.0
+dz = 20.0
 data = [0.0 for ind in range(nx * ny * nz)]
 
 # Medium properties
 c = 2000.0
 
-# The case of P-wave with length L m
-L = 200.0
-P_0 = 1.0
+# The case of Ricker P-wave with frequency f
+f = 50.0
+amp = 1.0
 
 # FIXME
 dt = 0.01
@@ -52,10 +52,7 @@ def initProblem():
 
 def getSurfacePressure(r, rr, tt):
 	t = tt - getDistance(r, rr) / c
-	if (t > 0.0) and (t < L / c):
-		return P_0
-	else:
-		return 0.0
+	return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(- pi * pi * f * f * t * t)
 
 def getDTTSurfacePressure(r, rr, tt):
 	return (getSurfacePressure(r, rr, tt + dt) - getSurfacePressure(r, rr, tt)) / dt
@@ -102,7 +99,7 @@ initProblem()
 r = Vector()
 rr = Vector()
 
-for tt in (0.2, 0.4, 0.6, 0.8):
+for tt in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
 	for kk in range(1, nz):
 		for jj in range(ny):
 			# FIXME rr == r => BANG!
