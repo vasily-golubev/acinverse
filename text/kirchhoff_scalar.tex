@@ -54,4 +54,26 @@ P(\vec{r'}, t') = \frac{1}{4\pi} \int_S [\frac{z' - z}{|\vec{r'} - \vec{r}|}(\fr
 - \vec{r}|}\frac{\partial P'}{\partial z}] ds
 \end{equation}
 
+Пусть на поверхность полупространства воздействует давление в виде импульса Риккера:
+\begin{equation}
+\label{eq_ricker_wavelet}
+P_{ricker} = P_0(1-2 \pi^2f^2t^2)e^{-\pi^2f^2t^2},
+\end{equation}
+тогда функция $P'(\vec{r'}, t')$ может быть записана в виде:
+\begin{equation}
+\label{eq_surface_pressure}
+P'(\vec{r'}, t') = P(\vec{r}, t' - \frac{|\vec{r'} - \vec{r}|}{c}) = P_0(1-2 \pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2)e^{-\pi^2f^2(t'-\frac{|\vec{r'} - \vec{r}|}{c})^2}.
+\end{equation}
+
+С учётом (\ref{eq_ricker_wavelet}) аналитически могут быть получены значения
+\begin{equation}
+\label{eq_dp'_dt'}
+\frac{\partial P'}{\partial t'} = -2\pi^2f^2P_0(3-2 \pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2)e^{-\pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2},
+\end{equation}
+и
+\begin{equation}
+\label{eq_dp'_dz}
+\frac{\partial P'}{\partial z} = -2\pi^2f^2P_0(t' - \frac{|\vec{r'} - \vec{r}|}{c})[3-2 \pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2]e^{-\pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2}
+\frac{z'-z}{c|\vec{r'}-\vec{r}|},
+\end{equation}
 \end{document}
