@@ -8,10 +8,10 @@ based on Kirchhoff formula'''
 # My definitions: rr = r', tt = t'
 
 # Mesh parameters
-nx = 50
+nx = 100
 ny = 1
 nz = 50
-dx = 20.0
+dx = 10.0
 dy = 20.0
 dz = 20.0
 data = [0.0 for ind in range(nx * ny * nz)]
@@ -52,7 +52,7 @@ def initProblem():
 
 def getSurfacePressure(r, rr, tt):
 	t = tt - getDistance(r, rr) / c
-	return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(- pi * pi * f * f * t * t)
+	return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(-pi * pi * f * f * t * t)
 
 def getDTTSurfacePressure(r, rr, tt):
 	return (getSurfacePressure(r, rr, tt + dt) - getSurfacePressure(r, rr, tt)) / dt
@@ -66,6 +66,25 @@ def getSingleValue(r, rr, tt):
 	res = 1.0 / c * getDTTSurfacePressure(r, rr, tt) + 1.0 / d / d * getSurfacePressure(r, rr, tt)
 	res *= (rr.z - r.z) / d
 	res -= 1.0 / d * getDZSurfacePressure(r, rr, tt)
+	return res
+
+def getDKSISurfacePressure(r, rr, tt):
+	d = getDistance(r, rr)
+	t = tt - d
+	return -2.0 * pi * pi * f * f * amp * t * (3.0 - 2.0 * pi * pi * f * f * t * t) * exp(-pi * pi * f * f * t * t)
+
+def getDTTSurfacePressureAnalytic(r, rr, tt):
+	return getDKSISurfacePressure(r, rr, tt)
+
+def getDZSurfacePressureAnalytic(r, rr, tt):
+	d = getDistance(r, rr)
+	return getDKSISurfacePressure(r, rr, tt) * (rr.z - r.z) / d / c
+
+def getSingleValueAnalytic(r, rr, tt):
+	d = getDistance(r, rr)
+	res = 1.0 / c * getDTTSurfacePressureAnalytic(r, rr, tt) + 1.0 / d / d * getSurfacePressure(r, rr, tt)
+	res *= (rr.z - r.z) / d
+	res -= 1.0 / d * getDZSurfacePressureAnalytic(r, rr, tt)
 	return res
 
 def saveImageVTK(tt):
@@ -113,7 +132,7 @@ for tt in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
 						r.x = i * dx
 						r.y = j * dy
 						r.z = 0
-						P += 1.0 / (4.0 * pi) * getSingleValue(r, rr, tt) * dx * dy
+						P += 1.0 / (4.0 * pi) * getSingleValueAnalytic(r, rr, tt) * dx * dy
 				ind = ii + jj * nx + kk * nx * ny
 				data[ind] = P
 		# TODO Some interactive tool
