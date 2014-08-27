@@ -10,7 +10,7 @@
 \maketitle
 Рассмотрим задачу о распространении скалярного волнового поля в однородном нижнем полупространстве,
 ограниченном сверху плоской поверхностью $S$.
-Скалярное волнове уравнение во временной области может быть записано в виде:
+Скалярное волновое уравнение во временной области может быть записано в виде:
 
 \begin{equation}
 \label{eq_wave_equation}
@@ -76,4 +76,37 @@ P'(\vec{r'}, t') = P(\vec{r}, t' - \frac{|\vec{r'} - \vec{r}|}{c}) = P_0(1-2 \pi
 \frac{\partial P'}{\partial z} = -2\pi^2f^2P_0(t' - \frac{|\vec{r'} - \vec{r}|}{c})[3-2 \pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2]e^{-\pi^2f^2(t' - \frac{|\vec{r'} - \vec{r}|}{c})^2}
 \frac{z'-z}{c|\vec{r'}-\vec{r}|},
 \end{equation}
+
+Мною была реализована программа на языке Python, которая вычисляет численно интеграл (\ref{eq_kirchhoff_final}) методом прямоугольников с подстановкой (\ref{eq_dp'_dt'} и \ref{eq_dp'_dz}).
+Проведён расчёт с $C_P = 2000$ м/с, $f = 10$ Гц.
+На рисунках (\ref{img_snapshot_1} - \ref{img_snapshot_3}) представлено распределение $P$ по объёму (вертикальное сечение) в последовательные моменты времени.
+При этом ось Z направлена вверх, т.е. граница области находится снизу.
+
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/t1.png}
+  \caption{Через 100 мс}
+\label{img_snapshot_1}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \caption{Через 100 мс}
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/t2.png}
+  \caption{Через 200 мс}
+\label{img_snapshot_2}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/t3.png}
+  \caption{Через 300 мс}
+\label{img_snapshot_3}
+\end{figure}
+
+Из особенностей результатов:
+\begin{enumerate}
+\item волна распространяется вдоль области и качественно сохраняет форму импульса;
+\item от границы области распространяются артефакты - по-видимому, следствие того, что
+в формуле Кирхгофа граница области - бесконечная прямая;
+\item амплитуда сигнала затухает при распространении вглубь среды.
+\end{enumerate}
 \end{document}
