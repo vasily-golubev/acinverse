@@ -58,7 +58,7 @@ def getSingleValueTransformed(r, rr, tt):
 	rr_dz.x = rr.x
 	rr_dz.y = rr.y
 	rr_dz.z = rr.z + dz
-	res = getSurfacePressure(r, tt + getDistance(r, rr_dz) / c) - getSurfacePressure(r, tt + getDistance(r, rr) / c)
+	res = getSurfacePressure(r, tt - getDistance(r, rr_dz) / c) - getSurfacePressure(r, tt - getDistance(r, rr) / c)
 	res /= getDistance(r, rr)
 	return res
 
@@ -94,7 +94,7 @@ r = Vector()
 rr = Vector()
 
 #for tt in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
-for tt in (0.1, ):
+for tt in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
 	for kk in range(1, nz):
 		for jj in range(ny):
 			# FIXME rr == r => BANG!
