@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 from math import exp, sqrt, pi
 
 print '''Solver of direct problem for scalar wave equation \
@@ -22,9 +23,6 @@ c = 2000.0
 # The case of Ricker P-wave with frequency f
 f = 50.0
 amp = 1000000000.0
-
-# FIXME
-dt = 0.01
 
 class Vector():
 	x = 0
@@ -51,7 +49,13 @@ def initProblem():
 	pass
 
 def getSurfacePressure(r, t):
-	return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(-pi * pi * f * f * t * t)
+	if (sys.argv[1] == "BANG"):
+		if (r.x == nx / 2 * dx) and (r.y == ny / 2 * dy) and (r.z == 0):
+			return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(-pi * pi * f * f * t * t)
+		else:
+			return 0.0
+	else:
+		return amp * (1 - 2.0 * pi * pi * f * f * t * t) * exp(-pi * pi * f * f * t * t)
 
 def getSingleValueTransformed(r, rr, tt):
 	rr_dz = Vector()
@@ -88,6 +92,12 @@ def initProblem():
 	pass
 
 # Here is the entrance point in the program
+if len(sys.argv) < 2:
+	print "Please, use as: ./name_of_program PWAVE/BANG"
+	sys.exit(-1)
+if (sys.argv[1] != "PWAVE") and (sys.argv[1] != "BANG"):
+	print "Possible arguments is PWAVE/BANG"
+	sys.exit(-1)
 
 initProblem()
 r = Vector()
