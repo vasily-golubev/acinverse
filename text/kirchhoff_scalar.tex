@@ -90,7 +90,6 @@ P'(\vec{r'}, t') = P(\vec{r}, t' - \frac{|\vec{r'} - \vec{r}|}{c}) = P_0(1-2 \pi
 \end{figure}
 \begin{figure}[ht]
   \center
-  \caption{Через 100 мс}
   \includegraphics[scale=0.2]{pic_kirchhoff_scalar/t2.png}
   \caption{Через 200 мс}
 \label{img_snapshot_2}
@@ -109,4 +108,51 @@ P'(\vec{r'}, t') = P(\vec{r}, t' - \frac{|\vec{r'} - \vec{r}|}{c}) = P_0(1-2 \pi
 в формуле Кирхгофа граница области - бесконечная прямая;
 \item амплитуда сигнала затухает при распространении вглубь среды.
 \end{enumerate}
+
+Алёной Фаворской было проведено упрощение формулы \ref{eq_kirchhoff_final} так, что отпала необходимость вычислять производную
+сигнала по времени.
+Программа была доработана с учётом этого подхода мною.
+Также, кроме продольной волны, заданной на всей дневной поверхности, добавлена возможность задания точечного взрыва.
+На рисунках (\ref{img_point_1} - \ref{img_point_3}) представлены волновые картины при воздействии точечного источника,
+на рисунках (\ref{img_pwave_1} - \ref{img_pwave_3}) - продольной волны.
+Ось Z развёрнута так, что дневная поверхность сверху.
+
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/point_1.png}
+  \caption{Через 100 мс}
+\label{img_point_1}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/point_2.png}
+  \caption{Через 200 мс}
+\label{img_point_2}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/point_3.png}
+  \caption{Через 300 мс}
+\label{img_point_3}
+\end{figure}
+
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.5]{pic_kirchhoff_scalar/pwave_1.png}
+  \caption{Через 100 мс}
+\label{img_pwave_1}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.5]{pic_kirchhoff_scalar/pwave_2.png}
+  \caption{Через 200 мс}
+\label{img_pwave_2}
+\end{figure}
+\begin{figure}[ht]
+  \center
+  \includegraphics[scale=0.2]{pic_kirchhoff_scalar/pwave_3.png}
+  \caption{Через 300 мс}
+\label{img_pwave_3}
+\end{figure}
+
 \end{document}
