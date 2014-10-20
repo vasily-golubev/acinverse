@@ -13,13 +13,13 @@
 #define By  100.0
 #define Bz  0.0
 #define H   200.0
-#define Nx  64
+#define Nx  100
 #define Ny  64
 #define Nz  100
 
-#define P0 1e6
+#define P0 1e-3
 #define f 50.0
-#define C 200
+#define C 500
 
 
 double dx = (Bx-Ax)/Nx;
@@ -67,7 +67,7 @@ double integrate(double t, vector r, vector R) {
 		for (int iy = 0; iy < Ny; iy++) {
 			S += ds*integrand(t, r, R);
 		}
-	cout << S;
+	cout << '.';
 	return S;
 }
 	 

@@ -3,8 +3,8 @@ set output 'plot.eps'
 
 set xlabel "X"
 set ylabel "Z"
-set zlabel "Pressure"
-set xrange [-100:100]
-set yrange [0:100]
+set zlabel "P"
+set xrange [-110:110]
+set yrange [0:150]
 
-splot 'ricker.dat' t 'data'
+splot 'data.txt' w lines notitle

@@ -14,14 +14,14 @@
 #define By  100.0
 #define Bz  0.0
 #define H   200.0
-#define Nx  32
-#define Ny  32
-#define Nz  64
-#define Nt  20
+#define Nx  100
+#define Ny  64
+#define Nz  100
+#define Nt  25
 
-#define P0 1
+#define P0 (1.0/1024/8)
 #define f 50.0
-#define C 200
+#define C 500
 
 
 double dx = (Bx-Ax)/Nx;
@@ -75,12 +75,13 @@ double integrate(double t, vector r, vector R) {
 FILE *gpinit(void) {	
 	FILE *gp = popen("gnuplot","w");
 	fprintf(gp, "set xlabel 'X'\n set ylabel 'Z'\n set zlabel 'P'\n");
+	fprintf(gp, "set style fill solid\n");
 	fprintf(gp, "set xrange [%.0f:%.0f]\n set yrange [%.0f:%.0f]\n", Ax, Bx, 0.0, H);
 	return gp;
 }	
 
 void splot(FILE *gp, double t, double data[Nx][Nz]) {
-	fprintf(gp, "splot '-' t 't = %.4lf'\n", t);
+	fprintf(gp, "splot '-' w lines t 't = %.3lf'\n", t);
 	int ix, iz;
 	for (ix = 0; ix < Nx; ix++) {
 		for (iz = 0; iz < Nz; iz++) {
@@ -105,7 +106,7 @@ int main(int argv, char *argc[]) {
 	for (ix = 0; ix < Nx; ix++) 
 		for (iz = 0; iz < Nz; iz++) 
 			data[ix][iz] = 0.0;
-	splot(gp, t, data); 
+//	splot(gp, t, data); 
 	vector R;
 	double dt = t/Nt;
 	for (it = 0; it < Nt; it++) {
@@ -118,6 +119,7 @@ int main(int argv, char *argc[]) {
 			}
 		}
 		splot(gp, t, data); 
+//		if (it == 0) {sleep(10);}
 	}
 	sleep(10);
 	pclose(gp);
