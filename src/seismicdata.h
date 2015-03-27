@@ -21,6 +21,7 @@ class SeismicData {
 		void generatePointSource(float x, float y, float z, float c);
 		void generatePointRickerWavelet(float x, float y, float z, float c, float f);
 		void readDataMadagascar(const char *filename, int nt, int nx, float dt, float dx);
+		void readDataBorni(const char *filename, int nt, int nx, float dt, float dx);
 		float dX() { return d_x; };
 		float dY() { return d_y; };
 		float dZ() { return d_z; };

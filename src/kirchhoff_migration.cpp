@@ -22,8 +22,9 @@ int main(int argc, char *argv[]) {
 	}
 	ifs.close();
 	SeismicData *data = new SeismicData();
-	data->readDataMadagascar("/var/tmp/zhdanov/test/node6/zodata.rsf@", 2001, 251, 0.01, 40);
-	data->saveSeismograms("madagascar.vtk");
+	data->readDataMadagascar("/var/tmp/madagascar/marmousi/shot/marmrefl_new.rsf@", 726, 240, 0.004, 25);
+//	data->readDataBorni("/home/vgolubev/work/github/acinverse/borni/seismodata_model3_o50_dx50_dz50_ZR.txt", 200, 201, 0.01, 50);
+	data->saveSeismograms("marmousi_in.vtk");
 	data->setFilename(argv[2]);
 	data->skipHeader(&ifs);
 	data->setDimensions(&ifs);
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
 /*	data->generatePointSource(0, 750, 1000, 2000.0);
 	data->saveSeismograms("temp.vtk");
 	RayleighIntegral integral;
-	integral.initParams(2000.0);
+	integral.initParams(5000.0);
 	integral.initSeismicData(data);
 	integral.calculateImage();
 	data->saveImage();

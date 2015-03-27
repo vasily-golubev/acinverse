@@ -25,8 +25,8 @@ void SeismicData::readDataMadagascar(const char *filename, int nt, int nx, float
 	d_x = dx;
 	n_y = 1;
 	d_y = 1;
-	n_z = 125;
-	d_z = 40;
+	n_z = 751;
+	d_z = 4;
 	data = (float *) calloc(n_x * n_y * n_t, sizeof(float));
 	if (!data)
 			throw std::runtime_error("Can't allocate memory for data.");
@@ -45,6 +45,36 @@ void SeismicData::readDataMadagascar(const char *filename, int nt, int nx, float
 		}
 	ifs.close();
 }
+
+void SeismicData::readDataBorni(const char *filename, int nt, int nx, float dt, float dx) {
+	n_t = nt;
+	d_t = dt;
+	n_x = nx;
+	d_x = dx;
+	n_y = 1;
+	d_y = 1;
+	n_z = 100;
+	d_z = 50;
+	data = (float *) calloc(n_x * n_y * n_t, sizeof(float));
+	if (!data)
+			throw std::runtime_error("Can't allocate memory for data.");
+	image = (float *) calloc(n_x * n_y * n_z, sizeof(float));
+	if (!image)
+			throw std::runtime_error("Can't allocate memory for image.");
+	std::ifstream ifs;
+	ifs.open(filename, std::ifstream::in);
+	if (ifs.fail())
+		throw std::runtime_error("Can't open Borni file.");
+	for (int k = 0; k < nt; k++)
+		for (int i = 0; i < nx; i++) {
+			int j = 0;
+			int ind = i + j * n_x + k * n_x * n_y;
+			ifs >> data[ind];
+			//ifs.read((char *)&(data[ind]), sizeof(float));
+		}
+	ifs.close();
+}
+
 void SeismicData::generatePointSource(float x, float y, float z, float c) {
 	vector3 r_o(x, y, z);
 	for (int k = 0; k < n_t; k++)
@@ -122,6 +152,7 @@ float SeismicData::getValue(float x, float y, float t) {
 	if ( ((i < 0) || (i > n_x - 1)) ||
 		((j < 0) || (j > n_y - 1)) ||
 		((k < 0) || (k > n_t - 1)) ) {
+			return 0.0;
 			throw std::runtime_error("For migration longer seismogram is necessary.");
 		}
 	int ind = i + j * n_x + k * n_x * n_y;
@@ -200,7 +231,7 @@ void SeismicData::saveSeismograms(const char *name) {
 	ofs << "ASCII\n";
 	ofs << "DATASET STRUCTURED_POINTS\n";
 	ofs << "DIMENSIONS " << n_x << " " << n_y << " " << n_t << "\n";
-	ofs << "SPACING " << d_x << " " << d_y << " " << d_t << "\n";
+	ofs << "SPACING " << d_x << " " << d_y << " " << 4000.0 * d_t << "\n";
 	ofs << "ORIGIN 0 0 0\n";
 	ofs << "POINT_DATA " << n_x * n_y * n_t << "\n";
 	ofs << "SCALARS U float 1\n";
