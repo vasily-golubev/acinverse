@@ -199,7 +199,7 @@ U^m(\vec{r'}) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[scale=0.3]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/Figure_1.png}
+  \includegraphics[scale=0.3]{./pic/report_april/Figure_1.png}
 }
 \captionof{figure}{Сейсмограмма с одной прямой границей.}
 \label{seismo_1}
@@ -212,7 +212,7 @@ U^m(\vec{r'}) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[scale=0.3]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/Figure_2.png}
+  \includegraphics[scale=0.3]{./pic/report_april/Figure_2.png}
 }
 \captionof{figure}{ZO-cейсмограмма с одной прямой границей.}
 \label{seismo_2}
@@ -229,7 +229,7 @@ U^m(\vec{r'}) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[scale=0.3]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/Figure_3.png}
+  \includegraphics[scale=0.3]{./pic/report_april/Figure_3.png}
 }
 \captionof{figure}{Сейсмограмма для модели с тремя отражающими горизонтами.}
 \label{seismo_3}
@@ -238,7 +238,7 @@ U^m(\vec{r'}) = -\frac{1}{2\pi}\frac{\partial}{\partial z'}
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[scale=0.3]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/Figure_4.png}
+  \includegraphics[scale=0.3]{./pic/report_april/Figure_4.png}
 }
 \captionof{figure}{ZO-сейсмограмма для модели с тремя отражающими горизонтами.}
 \label{seismo_4}
@@ -256,8 +256,70 @@ U^m(i,j,k) = -\frac{1}{2\pi}\frac{\sum\limits_{l,m} \frac{U(l,m,\frac{2d(i,j,k+1
 
 Была реализована программа AcInverse на языке C++, производящая миграцию Кирхгофа (Рэлея).
 Для её тестирования были использованы сейсмограммы, генерируемые ПО Madagascar для различного расположения отражающих границ.
+Во всех задачах для удобства фиксировались следующие параметры: фоновая скорость распространения продольных волн 2500 м/с, геометрия расчётной области 10 км x 5 км,
+временная функция источника - Риккер с основной частотой 25 Гц, измерительная система - 2001 источник и 2001 приёмник, установленные каждые 5 м.
+При миграции шаг сетки составлял 5 x 5 м.
 
-\todo[inline]{ПРИМЕРЫ МИГРАЦИИ СО СЛОЖНЫМИ ГРАНИЦАМИ КИРХГОФОМ}
+На рисунках (\ref{seismo_verif_model_0} - \ref{seismo_verif_model_3}) представлены ZO-сейсмограммы и миграционные изображения, рассчитанные в AcInverse.
+Рассматрились четыре различные постановки задачи (отличаются формой границ):
+\begin{itemize}
+\item $z = -2$ и $z = -2 + (0.1 * x + 0.5)$
+\item $z = -1$ и $z = -2$
+\item $z = -1.5 - \frac{(x - 5)^2}{25}$ и $z = -1 - \frac{(x - 5)^2}{25}$
+\item $z = -1.2 - sin(\frac{(x-5)^2}{2})$ и $z = -0.2 - sin(\frac{(x-5)^2}{2})$
+\end{itemize}
+
+\noindent
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+\begin{tabular}{cc}
+\includegraphics[width=50mm]{./pic/report_april/zodata_0.png}
+&
+\includegraphics[width=60mm]{./pic/report_april/model_0.png}
+\end{tabular}
+}
+\captionof{figure}{ZO-сейсмограмма (слева) и миграционное изображение справа. Модель 0.}
+\label{seismo_verif_model_0}
+\end{minipage}
+
+\noindent
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+\begin{tabular}{cc}
+\includegraphics[width=50mm]{./pic/report_april/zodata_1.png}
+&
+\includegraphics[width=60mm]{./pic/report_april/model_1.png}
+\end{tabular}
+}
+\captionof{figure}{ZO-сейсмограмма (слева) и миграционное изображение справа. Модель 1.}
+\label{seismo_verif_model_1}
+\end{minipage}
+
+\noindent
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+\begin{tabular}{cc}
+\includegraphics[width=50mm]{./pic/report_april/zodata_2.png}
+&
+\includegraphics[width=60mm]{./pic/report_april/model_2.png}
+\end{tabular}
+}
+\captionof{figure}{ZO-сейсмограмма (слева) и миграционное изображение справа. Модель 2.}
+\label{seismo_verif_model_2}
+\end{minipage}
+
+\noindent
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+\begin{tabular}{cc}
+\includegraphics[width=50mm]{./pic/report_april/zodata_3.png}
+&
+\includegraphics[width=60mm]{./pic/report_april/model_3.png}
+\end{tabular}
+}
+\captionof{figure}{ZO-сейсмограмма (слева) и миграционное изображение справа. Модель 3.}
+\label{seismo_verif_model_3}
+\end{minipage}
 
 \subsection{Миграция. Приближение Борна.}
 
@@ -283,9 +345,9 @@ U^m(i,j,k) = -\frac{1}{2\pi}\frac{\sum\limits_{l,m} \frac{U(l,m,\frac{2d(i,j,k+1
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
 \begin{tabular}{cc}
-\includegraphics[width=50mm]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/seismo_verif_zo_madagascar_borni-madagascar.png}
+\includegraphics[width=50mm]{./pic/report_april/seismo_verif_zo_madagascar_borni-madagascar.png}
 &
-\includegraphics[width=60mm]{/home/vgolubev/work/github/acinverse/borni/seismo_verif_zo_madagascar_borni-borni.png}
+\includegraphics[width=60mm]{./pic/report_april/seismo_verif_zo_madagascar_borni-borni.png}
 \end{tabular}
 }
 \captionof{figure}{ZO-сейсмограмма для верификационной модели. Слева - Madagascar, справа - Borni.}
@@ -298,7 +360,7 @@ U^m(i,j,k) = -\frac{1}{2\pi}\frac{\sum\limits_{l,m} \frac{U(l,m,\frac{2d(i,j,k+1
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[width=100mm]{/home/vgolubev/work/github/acinverse/madagascar/report/Fig/seismo_verif_madagascar_borni-acinverse.png}
+  \includegraphics[width=100mm]{./pic/report_april/seismo_verif_madagascar_borni-acinverse.png}
 }
 \captionof{figure}{Миграционное изображение для верификационной модели, полученное методом Кирхгофа (AcInverse). Слева - на входе Борн (Borni), справа - на входе Кирхгоф (Madagascar).}
 \label{seismo_verif_madagascar_borni-acinverse}
@@ -309,7 +371,7 @@ U^m(i,j,k) = -\frac{1}{2\pi}\frac{\sum\limits_{l,m} \frac{U(l,m,\frac{2d(i,j,k+1
 \noindent
 \begin{minipage}{\linewidth}
 \makebox[\linewidth]{
-  \includegraphics[width=120mm]{/home/vgolubev/work/github/acinverse/borni/seismo_verif_madagascar_borni-borni.png}
+  \includegraphics[width=120mm]{./pic/report_april/seismo_verif_madagascar_borni-borni.png}
 }
 \captionof{figure}{Миграционное изображение для верификационной модели, полученное методом присоединённого оператора (Борн, Borni). Слева - на входе Борн (Borni), справа - на входе Кирхгоф (Madagascar).}
 \label{seismo_verif_madagascar_borni-borni}
